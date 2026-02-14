@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+import "dotenv/config";
+import { z } from "zod";
 
 const envSchema = z.object({
   // Server
@@ -7,7 +8,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   // Database
-  DATABASE_URL: z.url(),
+  DATABASE_URL: z.string().min(1),
 
   // AWS
   AWS_REGION: z.string().default("us-east-1"),
@@ -15,10 +16,10 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
 
   // S3
-  S3_BUCKET_NAME: z.string(),
+  S3_BUCKET_NAME: z.string().min(1),
 
   // App
-  EMAIL_DOMAIN: z.string(),
+  EMAIL_DOMAIN: z.string().min(1),
   RETENTION_HOURS: z.coerce.number().default(24),
 });
 
@@ -29,7 +30,7 @@ function loadEnv(): Env {
 
   if (!result.success) {
     console.error("Invalid environment variables:");
-    console.error(z.treeifyError(result.error));
+    console.error(result.error.issues);
     process.exit(1);
   }
 
