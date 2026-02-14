@@ -4,7 +4,7 @@ import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import { env } from "./config/env.js";
 import { registerErrorHandler } from "./plugins/error-handler.js";
-import { healthRoutes } from "./routes/health.js";
+import { registerRoutes } from "./routes/index.js";
 
 export async function buildServer() {
   const loggerConfig =
@@ -48,7 +48,7 @@ export async function buildServer() {
   registerErrorHandler(fastify);
 
   // Register routes
-  await fastify.register(healthRoutes);
+  await registerRoutes(fastify);
 
   return fastify;
 }
