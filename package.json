@@ -15,7 +15,12 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
+    "db:studio": "prisma studio"
   },
   "keywords": [
     "disposable-email",
@@ -32,11 +37,14 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
+    "prisma": "^7.4.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0"
   },
   "dependencies": {
+    "@prisma/client": "^7.4.0",
+    "dotenv": "^17.3.1",
     "zod": "^4.3.6"
   }
 }

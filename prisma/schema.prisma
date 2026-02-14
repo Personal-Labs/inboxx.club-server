@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Inbox {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  expiresAt DateTime  @map("expires_at")
+  messages  Message[]
+
+  @@index([expiresAt])
+  @@map("inboxes")
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  inboxId     String   @map("inbox_id")
+  inbox       Inbox    @relation(fields: [inboxId], references: [id], onDelete: Cascade)
+
+  fromAddress String   @map("from_address")
+  fromName    String?  @map("from_name")
+  toAddress   String   @map("to_address")
+  subject     String?
+
+  s3RawKey    String   @map("s3_raw_key")
+  s3HtmlKey   String?  @map("s3_html_key")
+  s3TextKey   String?  @map("s3_text_key")
+
+  textPreview String?  @map("text_preview")
+
+  receivedAt  DateTime @default(now()) @map("received_at")
+  expiresAt   DateTime @map("expires_at")
+
+  attachments Attachment[]
+
+  @@index([inboxId, receivedAt(sort: Desc)])
+  @@index([receivedAt])
+  @@index([expiresAt])
+  @@map("messages")
+}
+
+model Attachment {
+  id          String  @id @default(cuid())
+  messageId   String  @map("message_id")
+  message     Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  filename    String
+  contentType String  @map("content_type")
+  size        Int
+  s3Key       String  @map("s3_key")
+
+  @@index([messageId])
+  @@map("attachments")
+}
+
+model InboundEvent {
+  id          String   @id @default(cuid())
+  messageId   String?  @map("message_id")
+  s3RawKey    String   @map("s3_raw_key")
+  status      String
+  error       String?
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@index([processedAt])
+  @@map("inbound_events")
+}
