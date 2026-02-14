@@ -4,6 +4,7 @@ import { inboxRoutes } from "./inbox.js";
 import { messageRoutes } from "./message.js";
 import { attachmentRoutes } from "./attachment.js";
 import { inboundRoutes } from "./inbound.js";
+import { cleanupRoutes } from "./cleanup.js";
 
 async function v1Routes(fastify: FastifyInstance): Promise<void> {
   await fastify.register(healthRoutes);
@@ -11,6 +12,7 @@ async function v1Routes(fastify: FastifyInstance): Promise<void> {
   await fastify.register(messageRoutes);
   await fastify.register(attachmentRoutes);
   await fastify.register(inboundRoutes);
+  await fastify.register(cleanupRoutes);
 }
 
 export async function registerRoutes(fastify: FastifyInstance): Promise<void> {
