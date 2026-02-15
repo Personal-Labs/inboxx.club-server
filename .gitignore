@@ -39,3 +39,6 @@ coverage/
 # Markdown files
 *.md
 /src/generated/prisma
+
+
+*.txt

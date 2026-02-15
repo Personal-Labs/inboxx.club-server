@@ -1,0 +1,64 @@
+{
+  "family": "inboxx-server",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::104422508177:role/inboxx-ecs-execution-role",
+  "taskRoleArn": "arn:aws:iam::104422508177:role/inboxx-ecs-task-role",
+  "containerDefinitions": [
+    {
+      "name": "inboxx-server",
+      "image": "104422508177.dkr.ecr.ap-south-1.amazonaws.com/inboxx-server:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "3000" }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:DATABASE_URL::"
+        },
+        {
+          "name": "S3_BUCKET_NAME",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:S3_BUCKET_NAME::"
+        },
+        {
+          "name": "AWS_REGION",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:AWS_REGION::"
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:AWS_ACCESS_KEY_ID::"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:AWS_SECRET_ACCESS_KEY::"
+        },
+        {
+          "name": "EMAIL_DOMAIN",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:EMAIL_DOMAIN::"
+        },
+        {
+          "name": "RETENTION_HOURS",
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:104422508177:secret:inboxx-server/production-mW0VKB:RETENTION_HOURS::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/inboxx-server",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
