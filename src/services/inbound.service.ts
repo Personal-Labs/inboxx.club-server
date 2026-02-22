@@ -2,6 +2,7 @@ import { simpleParser, type ParsedMail, type Attachment } from "mailparser";
 import { prisma } from "../lib/prisma.js";
 import { putObject, getObject } from "../lib/s3.js";
 import { env } from "../config/env.js";
+import { isReservedUsername } from "./inbox.service.js";
 
 const USERNAME_REGEX = /^[a-z0-9._-]{3,40}$/;
 
@@ -107,6 +108,16 @@ export async function processInboundEmail(s3RawKey: string): Promise<ProcessedEm
       error: `Invalid recipient: ${recipient}`,
     });
     throw new Error(`Invalid recipient: ${recipient}`);
+  }
+
+  // Check if username is reserved
+  if (isReservedUsername(username)) {
+    await logInboundEvent({
+      s3RawKey,
+      status: "invalid_recipient",
+      error: `Reserved username: ${username}`,
+    });
+    throw new Error(`Reserved username: ${username}`);
   }
 
   // Create or update inbox

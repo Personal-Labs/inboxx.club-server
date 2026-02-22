@@ -1,6 +1,47 @@
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 
+// Reserved usernames that cannot be used for disposable inboxes
+const RESERVED_USERNAMES = [
+  "admin",
+  "administrator",
+  "support",
+  "help",
+  "info",
+  "contact",
+  "postmaster",
+  "webmaster",
+  "hostmaster",
+  "abuse",
+  "noreply",
+  "no-reply",
+  "mailer-daemon",
+  "root",
+  "security",
+  "ssl",
+  "ftp",
+  "mail",
+  "email",
+  "www",
+  "api",
+  "test",
+  "demo",
+  "billing",
+  "sales",
+  "marketing",
+  "newsletter",
+  "feedback",
+  "privacy",
+  "legal",
+  "terms",
+  "dmca",
+  "copyright",
+];
+
+export function isReservedUsername(username: string): boolean {
+  return RESERVED_USERNAMES.includes(username.toLowerCase());
+}
+
 export interface ListMessagesOptions {
   limit: number;
   cursor?: string | undefined;

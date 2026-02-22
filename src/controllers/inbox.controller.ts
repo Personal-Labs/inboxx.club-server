@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
-import { listMessages, deleteInbox } from "../services/index.js";
+import { listMessages, deleteInbox, isReservedUsername } from "../services/index.js";
 import { isValidUsername, normalizeUsername } from "../utils/username.js";
 import { AppError } from "../plugins/error-handler.js";
 import { success } from "../types/response.js";
@@ -28,6 +28,10 @@ export async function getInbox(
 
   if (!isValidUsername(username)) {
     throw new AppError(400, "Invalid username format", "INVALID_USERNAME");
+  }
+
+  if (isReservedUsername(username)) {
+    throw new AppError(403, "This username is reserved and cannot be used", "RESERVED_USERNAME");
   }
 
   const result = await listMessages(username, {
